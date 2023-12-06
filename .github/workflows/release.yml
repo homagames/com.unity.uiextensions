@@ -1,0 +1,23 @@
+name: Release package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  tests:
+    uses: homagames/unity-ci-environment/.github/workflows/run-tests.yml@master
+    secrets: inherit
+  create_upm_release:
+    uses: homagames/hg-mobile-tech-create-sdk-package-release/.github/workflows/workflow.yaml@v2
+    with:
+      publish-to-homa-lab: 'prod'
+    permissions:
+      contents: write
+    secrets: 
+      ORION_AUTH_TOKEN_PROD: ${{ secrets.ORION_AUTH_TOKEN_PROD }}
+      ORION_AUTH_TOKEN_STAGE: ${{ secrets.ORION_AUTH_TOKEN_STAGE }}
+      UNITY_NPM_REGISTRY_NPMRC: ${{ secrets.UNITY_NPM_REGISTRY_NPMRC }}
+      UNITY_NPM_REGISTRY_URL_SDK: ${{ secrets.UNITY_NPM_REGISTRY_URL_SDK }}
+      UNITY_NPM_REGISTRY_URL_SDK_PRE_RELEASE:  ${{ secrets.UNITY_NPM_REGISTRY_URL_SDK_PRE_RELEASE }}
+    needs: tests
